@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+require 'optparse'
+$: << 'PATH'
+require 'compiler'
+
+Version = 'Millilisp Compiler VERSION'
+
+options = {:link => true, :assemble => true}
+OptionParser.new do |opts|
+	opts.banner = "Usage: #{opts.program_name} [options] input"
+	opts.separator "Options:"
+
+	opts.on("-c", "Don't link, only translate and assemble") do
+		options[:link] = false
+	end
+
+	opts.on("-E", "Don't assemble, only translate") do
+		options[:assemble] = false
+	end
+
+	opts.on("-o", "--output <file>",
+			"Write output to <file>") do |file|
+		options[:output] = file
+	end
+
+	opts.on("-V", "--version", "Show version information") do
+		puts Version
+		exit 0
+	end
+
+	opts.on("-h", "--help", "Show this message") do
+		puts opts.help
+		exit 0
+	end
+end.parse!
+
+options[:input] = ARGV.pop
+if not (options[:input] and ARGV.empty?)
+	OptionParser.new.abort 'Invalid arguments, see --help'
+end
+options[:output] ||= if not options[:assemble]
+						 File.basename(options[:input], '.*') + '.asm'
+					 elsif not options[:link]
+						 File.basename(options[:input], '.*') + '.o'
+					 else
+						 'a.out'
+					 end
+
+Compiler.new(options).compile

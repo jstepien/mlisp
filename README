@@ -1,0 +1,96 @@
+= Millilisp - a tiny Lisp compiler
+
+Millilisp (or simply *mlisp*) is an attempt to create a compiler for a small
+subset of Common Lisp. It covers a very narrow range of the language's features
+and it's nothing but a toy, actually.
+
+== Dependencies
+
+* Ruby, http://www.ruby-lang.org
+* Nasm, http://www.nasm.us
+* A C compiler
+
+Millilisp has been developed on a 32 bit GNU/Linux but it should be easy to port
+it to other operating systems.
+
+== Installation
+
+  $ make && sudo make install
+
+If you'd like to install it elsewhere set the +PREFIX+ variable:
+
+  $ export PREFIX=/usr && make && sudo make install
+
+See the variables on top of the Makefile if you'd like to make some additional
+adjustments.
+
+== Usage
+
+Assuming that 'file.lisp' contains code written in a subset of Common Lisp
+supported by the compiler, running
+
+  $ mlispc file.lisp
+
+will create an 'a.out' binary in the current directory. See `mlisp --help` to
+see all command line options.
+
+If 'libmlisp.a' has been installed in a non-standard directory your C compiler
+has to be pointed to it using the +LDFLAGS+ variable, for example
+
+  $ LDFLAGS='-L /opt/mlisp/lib' mlispc file.lisp
+
+You can choose the C compiler you'd like mlispc to use by defining the +CC+
+environment variable.
+
+== How does it work
+
+The compiler -- including a lexer and a parser -- is written in Ruby. It builds
+trees of sexps represented by instances of subclasses of Nodes::Node.
+Intermediate trees are analysed and modified by handlers of special types of
+nodes -- defuns, conds, quotes and lambdas -- and finally checked for semantic
+correctness. The result is sent to an emitter which outputs x86 assembly. The
+code is fed to nasm, which creates an object file. The output is linked with
+'libmlisp.a' and saved as an executable.
+
+The standard library, 'libmlisp.a', is implemented in ANSI C and Lisp. The most
+basic functionality is defined in 'stdlib.c'. Other functions, which are based
+on those written in C, can be found in 'funcs.lisp'. The part of the library
+implemented in Lisp is compiled by Millilisp.
+
+Definitions of data structures used in binaries created by Millilisp can be
+found in 'stdlib.c'.
+
+== Things to do
+
+Millilisp is light years from being called a Common Lisp implementation. There
+are a lot of missing features, among which the highest priority has been
+assigned to:
+
+* Floating point numbers
+* Basic arithmetic and comparison functions
+* String operations (probably using an external safe string library)
+* Parsing comments
+* Files IO support
+
+Apart from the supported subset of Common Lisp there are other issues which need
+some work.
+
+* A REPL
+* Freeing memory or simply using Boehm's GC
+* Tests
+
+== Copyrights
+
+(C) 2010 Jan Stępień
+
+Millilisp is free software: you can redistribute it and/or modify it under the
+terms of the GNU Lesser General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along
+with this program. If not, see <http://www.gnu.org/licenses/>.
