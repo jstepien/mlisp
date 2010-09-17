@@ -79,18 +79,23 @@ class Lexer
 end
 
 class Buffer
+	BufferSize = 1024
+
 	def initialize(input)
 		@input = input
 		@buffer = []
 	end
 
 	def read_char
-		return @buffer.shift if @buffer.any?
-		@input.read 1
+		if @buffer.empty?
+			return nil unless new_buffer = @input.read(BufferSize)
+			@buffer = new_buffer.chars.to_a
+		end
+		@buffer.shift
 	end
 
 	def unread_char(c)
-		@buffer << c
+		@buffer.unshift c
 	end
 end
 
