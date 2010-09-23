@@ -46,7 +46,7 @@ constants.h: constants.rb
 clean:
 	rm -rf *.o constants.h libmlisp.a test *.asm mlispc.rb doc
 .lisp.asm: mlispc.rb
-	$(RUBY) mlispc.rb -E -o $@ $^
+	$(RUBY) -I. mlispc.rb -E -o $@ $^
 install: all
 	mkdir -p $(DATADIR) $(BINDIR) $(LIBDIR)
 	$(INSTALL) -m 644 $(DATA_FILES) $(DATADIR)
