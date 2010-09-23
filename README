@@ -78,6 +78,7 @@ some work.
 * A REPL
 * Freeing memory or simply using Boehm's GC
 * Tests
+* Tail call optimisation would be welcome as well
 
 == Copyrights
 
