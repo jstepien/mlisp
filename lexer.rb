@@ -34,7 +34,7 @@ class Lexer
 	private
 
 	def next_nonwhitespace_char
-		loop do
+		while true
 			return '' if (c = @buffer.read_char).nil?
 			@line += 1 if c == "\n"
 			return c if not c.is_whitespace?
@@ -42,7 +42,7 @@ class Lexer
 	end
 
 	def next_symbol(symbol)
-		loop do
+		while true
 			c = @buffer.read_char
 			if c.is_whitespace? or not (symbol + c).is_symbol?
 				@buffer.unread_char c
@@ -55,7 +55,7 @@ class Lexer
 	end
 
 	def next_numeral(symbol)
-		loop do
+		while true
 			c = @buffer.read_char
 			if c.is_whitespace? or not (symbol + c).is_numeral?
 				@buffer.unread_char c
@@ -69,7 +69,7 @@ class Lexer
 
 	def next_string()
 		string = ''
-		loop do
+		while true
 			c = @buffer.read_char
 			break if c == '"'
 			string << c
