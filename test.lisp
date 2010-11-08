@@ -64,3 +64,4 @@
 (assert 't)
 (print "o hai")
 (print (list 'foo "foo"))
+(assert (> 7 6))

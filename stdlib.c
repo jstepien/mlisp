@@ -215,3 +215,14 @@ void * assert(void *object) {
 		die("Assertion failed\n");
 	return empty_list;
 }
+
+void * GT(void *a, void *b) {
+	if (numberp(a) && numberp(b))
+		if (((struct num*) a)->value > ((struct num*) b)->value)
+			return &true;
+		else
+			return empty_list;
+	else
+		die("GT: Unexpected types\n");
+	return empty_list;
+}

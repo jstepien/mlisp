@@ -7,6 +7,7 @@ require 'semantic_check'
 require 'cond_handler'
 require 'lambda_handler'
 require 'defun_handler'
+require 'ostruct'
 
 # Manages the whole compilation process using the Compiler#compile method.
 class Compiler
@@ -29,7 +30,7 @@ class Compiler
 	def compile
 		sexps = Parser.new(Lexer.new).parse(File.open(@input))
 		Quoter.new.apply sexps
-		symbol_table = {}
+		symbol_table = { '>' => OpenStruct.new({:label => 'GT'}) }
 		symbol_table.merge! DefunHandler.new.apply sexps
 		LambdaHandler.new.apply sexps
 		CondHandler.new.apply sexps
