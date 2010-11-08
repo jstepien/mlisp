@@ -104,6 +104,14 @@ static struct node * new_node() {
 	return node;
 }
 
+/* Returns a new num struct. */
+static struct num * new_num(int value) {
+	struct num *num = calloc(1, sizeof(struct num));
+	num->meta.flags |= TYPE_INT;
+	num->value = value;
+	return num;
+}
+
 /* Returns a new list with head being car and tail being cdr. */
 struct node * cons(void *head, void *tail) {
 	struct node *node = new_node();
@@ -224,5 +232,21 @@ void * GT(void *a, void *b) {
 			return empty_list;
 	else
 		die("GT: Unexpected types\n");
+	return empty_list;
+}
+
+void * MUL(void *a, void *b) {
+	if (is_int(a) && is_int(b))
+		return new_num(((struct num*) a)->value * ((struct num*) b)->value);
+	else
+		die("MUL: Unexpected types\n");
+	return empty_list;
+}
+
+void * SUB(void *a, void *b) {
+	if (is_int(a) && is_int(b))
+		return new_num(((struct num*) a)->value - ((struct num*) b)->value);
+	else
+		die("SUB: Unexpected types\n");
 	return empty_list;
 }

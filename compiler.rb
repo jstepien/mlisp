@@ -30,7 +30,16 @@ class Compiler
 	def compile
 		sexps = Parser.new(Lexer.new).parse(File.open(@input))
 		Quoter.new.apply sexps
-		symbol_table = { '>' => OpenStruct.new({:label => 'GT'}) }
+		# NOTE: OpenStructs are a temporary solution.
+		# TODO: Refactor it, make this method shorter, extract the symbol table
+		# initialisation to another function.
+		symbol_table = {
+			'>' => 'GT',
+			'*' => 'MUL',
+			'-' => 'SUB',
+		} .reduce({}) do |hash, pair|
+			hash.merge({ pair.first => OpenStruct.new({:label => pair.last}) })
+		end
 		symbol_table.merge! DefunHandler.new.apply sexps
 		LambdaHandler.new.apply sexps
 		CondHandler.new.apply sexps

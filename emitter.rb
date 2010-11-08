@@ -77,7 +77,7 @@ class Emitter
 	def emit_stdlib_functions_externs
 		write 'extern cons, print, cdr, car, cdar, cadr, caar, cddr, ' +
 			'caaar, caadr, caddr, cdddr, cddar, cdadr, cadar, ' +
-			'atom, eq, list, numberp, assert, GT'
+			'atom, eq, list, numberp, assert, GT, MUL, SUB'
 		write 'extern and, null, not, append, or, assoc, eval'
 	end
 
