@@ -61,3 +61,8 @@
 (assert (> 7 6))
 (asseq 'true (or '() 'true))
 (asseq 'true (or 'true 'also-true))
+(defun fact (x)
+  (cond
+    ((> x 1) (* x (fact (- x 1))))
+    ('t 1)))
+(assequal '(120 1 1) (list (fact 5) (fact 0) (fact 1)))
