@@ -126,7 +126,7 @@ module Nodes
 	end
 
 	# A constant string.
-	class String < Node
+	class String < Atom
 		attr_reader :value
 
 		def initialize(value)
