@@ -28,7 +28,7 @@ DATA_FILES=$(RUBY_CODE) libmlisp.a
 VERSION=$(shell git describe --tags)
 
 .SUFFIXES: .asm .lisp
-.PHONY: clean all install uninstall doc
+.PHONY: clean all install uninstall doc check
 
 all: mlispc.rb libmlisp.a
 mlispc.rb: mlispc.rb.in
@@ -43,6 +43,10 @@ stdlib.o: stdlib.c constants.h
 constants.h: constants.rb
 	$(SED) $^ -e 's/^module.*//' -e 's/^end$$//' -e 's/^\s*#.*//' \
 		-e 's/^\s*\([A-Z_]\+\)\s*=/#define \1/' > $@
+check: test
+	./test
+test: test.lisp all
+	LDFLAGS='-L.' $(RUBY) -I. mlispc.rb -o $@ $<
 clean:
 	rm -rf *.o constants.h libmlisp.a test *.asm mlispc.rb doc
 .lisp.asm: mlispc.rb
