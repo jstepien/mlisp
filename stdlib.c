@@ -171,6 +171,10 @@ void * atom(void *object) {
 
 /* True if both objects are identical symbols or numbers. */
 void * eq(void *a, void *b) {
+	return (a == b) ? &true : empty_list;
+}
+
+void * eql(void *a, void *b) {
 	int type_a;
 	if (is_empty_list(a) && is_empty_list(b))
 		return &true;
