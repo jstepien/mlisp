@@ -250,3 +250,18 @@ void * SUB(void *a, void *b) {
 		die("SUB: Unexpected types\n");
 	return empty_list;
 }
+
+/* True if both objects are isomorphic objects. */
+void * equal(void *a, void *b) {
+	if (is_empty_list(a) && is_empty_list(b))
+		return &true;
+	if (is_empty_list(a) || is_empty_list(b))
+		return empty_list;
+	if (is_node(a) && is_node(b))
+		return equal(car(a), car(b)) && equal(cdr(a), cdr(b)) ?
+			&true : empty_list;
+	if (is_string(a) && is_string(b))
+		return !strcmp(((struct string*) a)->value,
+				((struct string*) b)->value) ? &true : empty_list;
+	return eql(a, b);
+}
