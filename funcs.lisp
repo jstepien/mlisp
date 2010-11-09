@@ -2,7 +2,7 @@
   (eq x '()))
 (defun and (x y)
   (cond (x (cond
-			 (y 't)
+			 (y y)
 			 ('t '())))
 		('t '())))
 (defun or (x y)
