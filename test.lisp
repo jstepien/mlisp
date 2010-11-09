@@ -59,3 +59,5 @@
 (assequal "o hai" (car '("o hai")))
 (assequal '(foo "foo") (list 'foo "foo"))
 (assert (> 7 6))
+(asseq 'true (or '() 'true))
+(asseq 'true (or 'true 'also-true))
