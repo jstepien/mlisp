@@ -18,17 +18,18 @@ class Compiler
 	# [:assemble] Should we call nasm and assemble? If false, implies that
 	#             :link is false as well.
 	def initialize(opts={})
-		@input = opts[:input]
-		@output = opts[:output]
-		@link = opts[:link]
 		@assemble = opts[:assemble]
+		@link = @assemble and opts[:link]
+		@outputname = opts[:output]
+		prepare_output opts[:output]
+		prepare_input opts[:input]
 	end
 
-	# Opens a file, parses it, applies handlers of special kinds of sexps,
+	# Parses the input file, applies handlers of special kinds of sexps,
 	# generates the assembly code. Depending on the options passed to the
 	# constructor it can also assemble or link the result.
 	def compile
-		sexps = Parser.new(Lexer.new).parse(File.open(@input))
+		sexps = Parser.new(Lexer.new).parse(@input)
 		Quoter.new.apply sexps
 		# NOTE: OpenStructs are a temporary solution.
 		# TODO: Refactor it, make this method shorter, extract the symbol table
@@ -55,24 +56,41 @@ class Compiler
 
 	private
 
+	# Opens the output file or sets it to STDOUT if filename is equal to '-'.
+	# Sets the output file name. It forbids outputting binary data to STDOUT.
+	def prepare_output(filename)
+		@output = (filename == '-') ? $stdout : File.open(filename, 'w')
+		if @assemble or @link
+			raise 'I refuse to output binary data to stdout' if filename == '-'
+			@output_name = filename
+		end
+	end
+
+	# Opens the input file or sets it to STDIN if filename is equal to '-'.
+	# Sets the input file name.
+	def prepare_input(filename)
+		@input_name = filename
+		@input = (filename == '-') ? $stdin : File.open(filename, 'r')
+	end
+
 	# Returns the name of an object file in which assembler's output will be
 	# placed.
 	def object_file_name
 		if @link
-			File.dirname(@input) + '/' + File.basename(@input, '.*') + '.o'
+			File.dirname(@input_name) + '/' + File.basename(@input_name, '.*') + '.o'
 		else
-			@output
+			@output_name
 		end
 	end
 
 	# Saves the assembly code in the output file.
 	def output_assembly
-		File.open(@output, 'w').write(@assembly)
+		@output.write(@assembly)
 	end
 
 	# Saves the assembly code in a temporary file and calls Compiler#spawn_nasm.
 	def assemble
-		Tempfile.open File.basename(@input) + '.asm' do |file|
+		Tempfile.open File.basename(@input_name) + '.asm' do |file|
 			file.write @assembly
 			file.close
 			spawn_nasm file.path
@@ -91,7 +109,7 @@ class Compiler
 	# Forks, runs a C compiler and waits for it to finish.
 	def link
 		if (child = fork).nil?
-			exec "#{compiler} #{link_flags} -o #{@output} " +
+			exec "#{compiler} #{link_flags} -o #{@output_name} " +
 				"#{object_file_name} -lmlisp"
 		end
 		Process.wait child
