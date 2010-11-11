@@ -4,7 +4,12 @@ module Nodes
 	# The base class of all nodes.
 	class Node
 		# The label used by the assembler for jmps, movs, etc.
-		attr_accessor :label
+		attr_reader :label
+
+		# Substitutes dashes with underscores.
+		def label=(val)
+			@label = val.valid_c_symbol
+		end
 
 		# Returns an array of instructions evaluating the node and putting the
 		# result in EAX.
@@ -78,7 +83,7 @@ module Nodes
 				if symbol_table.include? name
 					symbol_table[name].label
 				else
-					name
+					name.valid_c_symbol
 				end
 			else
 				elements.first.label
@@ -227,5 +232,12 @@ module Nodes
 		def create_args_hash(label_gen)
 			args.reduce({}) { |hash,arg| hash.merge({ arg.name => arg }) }
 		end
+	end
+end
+
+class String
+	# Substitutes dashes with underscores.
+	def valid_c_symbol
+		self.tr '-', '_'
 	end
 end
