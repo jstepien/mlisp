@@ -34,7 +34,7 @@ module Nodes
 		attr_reader :elements
 
 		# Functions which accept an arbitrary number of arguments.
-		VarArgFuncs = %w{ list }
+		VarArgFuncs = %w{ list + - / * }
 
 		def initialize(elements)
 			@elements = elements

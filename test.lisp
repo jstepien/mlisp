@@ -71,3 +71,7 @@
 (assequal 8 (+ 5 3))
 (assequal 15 (* 5 3))
 (assequal 7 (- 11 4))
+(assequal 105 (* 3 5 7))
+(assequal 20 (+ 5 9 2 4))
+(assequal 10 (- 20 4 5 1))
+(assequal 7 (/ 105 5 3))

@@ -246,13 +246,21 @@ define_integer_relation(LE, <=)
 #undef define_integer_comparison
 
 #define define_integer_operation(name, op) \
-	void * name(void *a, void *b) { \
-		if (is_int(a) && is_int(b)) \
-			return new_num(((struct num*) a)->value op \
-					((struct num*) b)->value); \
-		else \
-			die(#name ": Unexpected types\n"); \
-		return empty_list; \
+	void * name(void * arg, ...) { \
+		va_list ap; \
+		va_start(ap, arg); \
+		if (!is_int(arg)) \
+			die(#name ": Unexpected type\n"); \
+		int acc = ((struct num*) arg)->value; \
+		arg = va_arg(ap, void *); \
+		while ((unsigned int) arg != VAR_ARG_DELIM) { \
+			if (!is_int(arg)) \
+				die(#name ": Unexpected type\n"); \
+			acc = acc op ((struct num*) arg)->value; \
+			arg = va_arg(ap, void *); \
+		} \
+		va_end(ap); \
+		return new_num(acc);\
 	}
 define_integer_operation(ADD, +)
 define_integer_operation(SUB, -)
