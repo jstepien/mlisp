@@ -2,7 +2,9 @@
   (assert (eq x y)))
 (defun assequal (x y)
   (assert (equal x y)))
-(assert 5)
+; This is a comment
+; (assert (not 'true))
+(assert 5) ; This is a comment too.
 (assert (quote (1 2)))
 (assert "asdf")
 (assert 'symbol)

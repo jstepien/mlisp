@@ -26,6 +26,9 @@ class Lexer
 			QuotationMark.new
 		when '"'
 			String.new next_string
+		when ';'
+			ignore_comment
+			next_token
 		else
 			Log.error "Illegal character on line #{@line}: '#{c}'"
 		end
@@ -75,6 +78,11 @@ class Lexer
 			string << c
 		end
 		string
+	end
+
+	def ignore_comment
+		while @buffer.read_char != "\n"
+		end
 	end
 end
 
