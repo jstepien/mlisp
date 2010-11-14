@@ -36,8 +36,13 @@ class Compiler
 		# initialisation to another function.
 		symbol_table = {
 			'>' => 'GT',
-			'*' => 'MUL',
+			'>=' => 'GE',
+			'<' => 'LT',
+			'<=' => 'LE',
+			'+' => 'ADD',
 			'-' => 'SUB',
+			'/' => 'DIV',
+			'*' => 'MUL',
 		} .reduce({}) do |hash, pair|
 			hash.merge({ pair.first => OpenStruct.new({:label => pair.last}) })
 		end

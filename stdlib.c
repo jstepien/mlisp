@@ -228,32 +228,37 @@ void * assert(void *object) {
 	return empty_list;
 }
 
-void * GT(void *a, void *b) {
-	if (numberp(a) && numberp(b))
-		if (((struct num*) a)->value > ((struct num*) b)->value)
-			return &true;
-		else
-			return empty_list;
-	else
-		die("GT: Unexpected types\n");
-	return empty_list;
-}
+#define define_integer_relation(name, rel) \
+	void * name(void *a, void *b) { \
+		if (numberp(a) && numberp(b)) \
+			if (((struct num*) a)->value rel ((struct num*) b)->value) \
+				return &true; \
+			else \
+				return empty_list; \
+		else \
+			die(#name ": Unexpected types\n"); \
+		return empty_list; \
+	}
+define_integer_relation(GT, >)
+define_integer_relation(GE, >=)
+define_integer_relation(LT, <)
+define_integer_relation(LE, <=)
+#undef define_integer_comparison
 
-void * MUL(void *a, void *b) {
-	if (is_int(a) && is_int(b))
-		return new_num(((struct num*) a)->value * ((struct num*) b)->value);
-	else
-		die("MUL: Unexpected types\n");
-	return empty_list;
-}
-
-void * SUB(void *a, void *b) {
-	if (is_int(a) && is_int(b))
-		return new_num(((struct num*) a)->value - ((struct num*) b)->value);
-	else
-		die("SUB: Unexpected types\n");
-	return empty_list;
-}
+#define define_integer_operation(name, op) \
+	void * name(void *a, void *b) { \
+		if (is_int(a) && is_int(b)) \
+			return new_num(((struct num*) a)->value op \
+					((struct num*) b)->value); \
+		else \
+			die(#name ": Unexpected types\n"); \
+		return empty_list; \
+	}
+define_integer_operation(ADD, +)
+define_integer_operation(SUB, -)
+define_integer_operation(MUL, *)
+define_integer_operation(DIV, /)
+#undef define_integer_operation
 
 /* True if both objects are isomorphic objects. */
 void * equal(void *a, void *b) {

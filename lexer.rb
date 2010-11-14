@@ -102,7 +102,7 @@ end
 class String
 	WHITESPACES = [' ', "\t", "\n"]
 
-	SYMBOL_RE = /^[a-zA-Z<=>\-*][a-zA-Z0-9_\-\?]*$/
+	SYMBOL_RE = /^[a-zA-Z<=>\-*\/\+][a-zA-Z0-9_\-\?=]*$/
 
 	def is_whitespace?
 		WHITESPACES.include? self
